@@ -6,5 +6,3 @@
 *.jou
 /*.wdb
 /out/
-results/*/*
-results/*
