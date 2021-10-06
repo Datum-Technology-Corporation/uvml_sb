@@ -27,6 +27,8 @@ export PROJECT_TOOLS_IMPORT_DIR=${PROJECT_TOOLS_DIR}/.imports
 ### Tools ###
 # Local
 # Imports
+export TOOLS_DVM_SRC_PATH=${PROJECT_TOOLS_IMPORT_DIR}/dvm/src
+alias dvm="python ${TOOLS_DVM_SRC_PATH}/dvm.py"
 
 
 ### RTL ###
@@ -43,13 +45,6 @@ export UVM_HOME=${PROJECT_DV_IMPORTS_DIR}/uvm/src
 export DV_UVM_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvm/src
 export DV_UVML_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvml/src
 export DV_UVML_LOGS_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvml_logs/src
-export DV_UVML_RAL_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvml_ral/src
-export DV_UVMA_RESET_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvma_reset/src
-export DV_UVME_RESET_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvme_reset/src
-export DV_UVMT_RESET_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvmt_reset/src
-export DV_UVMA_CLK_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvma_clk/src
-export DV_UVME_CLK_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvme_clk/src
-export DV_UVMT_CLK_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvmt_clk/src
-export DV_UVMA_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvma_st/src
-export DV_UVME_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvme_st/src
-export DV_UVMT_ST_SRC_PATH=${PROJECT_DV_IMPORTS_DIR}/uvmt_st/src
+
+# PATH
+export PATH=${PATH}:${TOOLS_DVM_SRC_PATH}
