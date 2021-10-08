@@ -1,10 +1,10 @@
 # About
-The Moore.io UVM Scoreboarding library is a must for any UVM-based DV environment.
+The Moore.io UVM Scoreboarding Library is a vital component to any self-checking test bench.  This project consists solely of the library (`uvml_sb_pkg`) for the time being.
 
 # IP
 * [Download latest release (.tgz)](Todo)
 * [View latest documentation](Todo)
-* [Browse code](https://github.com/Datum-Technology-Corporation/uvml_sb)
+* [Browse code](https://github.com/Datum-Technology-Corporation/uvml_sb/tree/main/dv/uvml_sb)
 
 # Metrics
 ## Stability
