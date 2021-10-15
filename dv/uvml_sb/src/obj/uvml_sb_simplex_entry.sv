@@ -22,17 +22,19 @@ class uvml_sb_simplex_entry_c #(
    type T_EXP_TRN  = T_ACT_TRN
 ) extends uvm_object;
    
-   realtime                   timestamp; ///< 
-   T_ACT_TRN                  actual   ; ///< 
-   T_EXP_TRN                  expected ; ///< 
-   uvml_sb_entry_result_enum  result   ; ///< 
+   realtime                   actual_timestamp  ; ///< 
+   realtime                   expected_timestamp; ///< 
+   T_ACT_TRN                  actual_trn        ; ///< 
+   T_EXP_TRN                  expected_trn      ; ///< 
+   uvml_sb_entry_result_enum  result            ; ///< 
    
    
    `uvm_object_param_utils_begin(uvml_sb_simplex_entry_c#(.T_ACT_TRN(T_ACT_TRN), .T_EXP_TRN(T_EXP_TRN)))
-      `uvm_field_real  (                           timestamp, UVM_DEFAULT)
-      `uvm_field_object(                           actual   , UVM_DEFAULT)
-      `uvm_field_object(                           expected , UVM_DEFAULT)
-      `uvm_field_enum  (uvml_sb_entry_result_enum, result   , UVM_DEFAULT)
+      `uvm_field_real  (                           actual_timestamp  , UVM_DEFAULT + UVM_TIME)
+      `uvm_field_real  (                           expected_timestamp, UVM_DEFAULT + UVM_TIME)
+      `uvm_field_object(                           actual_trn        , UVM_DEFAULT           )
+      `uvm_field_object(                           expected_trn      , UVM_DEFAULT           )
+      `uvm_field_enum  (uvml_sb_entry_result_enum, result            , UVM_DEFAULT           )
    `uvm_object_utils_end
    
    
@@ -47,7 +49,7 @@ endclass : uvml_sb_simplex_entry_c
 function uvml_sb_simplex_entry_c::new(string name="uvml_sb_simplex_entry");
    
    super.new(name);
-   timestamp = $realtime();
+   timestamp_expected = $realtime();
    
 endfunction : new
 
