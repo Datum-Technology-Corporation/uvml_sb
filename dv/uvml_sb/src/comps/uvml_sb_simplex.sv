@@ -298,8 +298,15 @@ task uvml_sb_simplex_c::mode_in_order();
    entry.actual_timestamp = $realtime();
    
    if (cntxt.exp_q.size() == 0) begin
-      log_act_before_exp(act_trn);
-      entry.result = UVML_SB_ENTRY_RESULT_NO_EXPECTED;
+      if (act_trn.get_may_drop()) begin
+         log_drop(act_trn);
+         cntxt.drop_count++;
+         entry.result = UVML_SB_ENTRY_RESULT_DROP_ACTUAL;
+      end
+      else begin
+         log_act_before_exp(act_trn);
+         entry.result = UVML_SB_ENTRY_RESULT_NO_EXPECTED;
+      end
    end
    else begin
       exp_obj = cntxt.exp_q[0];
@@ -313,19 +320,28 @@ task uvml_sb_simplex_c::mode_in_order();
          cntxt.match_count++;
          entry.expected_trn = exp_trn;
          entry.result = UVML_SB_ENTRY_RESULT_MATCH;
+         entry.expected_timestamp = $realtime();
       end
       else begin
          if (exp_trn.get_may_drop()) begin
             void'(cntxt.exp_q.pop_front());
             log_drop(act_trn, exp_trn);
-            //cntxt.dropped++;
+            cntxt.drop_count++;
             entry.expected_trn = exp_trn;
-            entry.result = UVML_SB_ENTRY_RESULT_DROP;
+            entry.result = UVML_SB_ENTRY_RESULT_DROP_EXPECTED;
          end
          else begin
-            log_mismatch(act_trn, exp_trn);
-            cntxt.missed_count++;
-            entry.result = UVML_SB_ENTRY_RESULT_MISMATCH;
+            if (act_trn.get_may_drop()) begin
+               log_drop(act_trn);
+               cntxt.drop_count++;
+               entry.result = UVML_SB_ENTRY_RESULT_DROP_ACTUAL;
+            end
+            else begin
+               log_mismatch(act_trn, exp_trn);
+               cntxt.missed_count++;
+               entry.result = UVML_SB_ENTRY_RESULT_MISMATCH;
+               entry.expected_timestamp = $realtime();
+            end
          end
       end
    end
@@ -353,8 +369,15 @@ task uvml_sb_simplex_c::mode_out_of_order();
    entry.actual_timestamp = $realtime();
    
    if (cntxt.exp_q.size() == 0) begin
-      log_act_before_exp(act_trn);
-      entry.result = UVML_SB_ENTRY_RESULT_NO_EXPECTED;
+      if (act_trn.get_may_drop()) begin
+         log_drop(act_trn);
+         cntxt.drop_count++;
+         entry.result = UVML_SB_ENTRY_RESULT_DROP_ACTUAL;
+      end
+      else begin
+         log_act_before_exp(act_trn);
+         entry.result = UVML_SB_ENTRY_RESULT_NO_EXPECTED;
+      end
    end
    else begin
       foreach (cntxt.exp_q[ii]) begin
@@ -374,11 +397,13 @@ task uvml_sb_simplex_c::mode_out_of_order();
          cntxt.exp_q.delete(exp_match_idx);
          entry.expected_trn = exp_trn;
          entry.result = UVML_SB_ENTRY_RESULT_MATCH;
+         entry.expected_timestamp = $realtime();
       end
       else begin
          if (act_trn.get_may_drop()) begin
             log_drop(act_trn);
-            entry.result = UVML_SB_ENTRY_RESULT_DROP;
+            cntxt.drop_count++;
+            entry.result = UVML_SB_ENTRY_RESULT_DROP_ACTUAL;
          end
          else begin
             log_mismatch(act_trn);

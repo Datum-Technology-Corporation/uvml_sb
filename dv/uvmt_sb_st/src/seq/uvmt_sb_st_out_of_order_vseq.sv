@@ -73,12 +73,19 @@ task uvmt_sb_st_out_of_order_vseq_c::body();
             
             current_data = $urandom();
             current_drop = $urandom_range(0,1);
-            `uvm_create_on(exp_req, p_sequencer.expected_sequencer);
-            exp_req.data = current_data;
-            exp_req.set_may_drop(current_drop);
-            `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Sending expected item %0d of %0d:\n%s", ii+1, num_items, exp_req.sprint()), UVM_LOW)
-            `uvm_send(exp_req)
-            sent_exp.push_back(exp_req);
+            
+            if (current_drop && $urandom_range(0,1)) begin
+               `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Dropping expected item #%0d:\n%s", ii+1, exp_req.sprint()), UVM_LOW)
+               drop_count++;
+            end
+            else begin
+               `uvm_create_on(exp_req, p_sequencer.expected_sequencer);
+               exp_req.data = current_data;
+               exp_req.set_may_drop(current_drop);
+               `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Sending expected item %0d of %0d:\n%s", ii+1, num_items, exp_req.sprint()), UVM_LOW)
+               `uvm_send(exp_req)
+               sent_exp.push_back(exp_req);
+            end
          end
       end
       
@@ -99,6 +106,7 @@ task uvmt_sb_st_out_of_order_vseq_c::body();
             else begin
                `uvm_create_on(act_req, p_sequencer.actual_sequencer);
                act_req.data = sent_req.data;
+               act_req.set_may_drop(sent_req.get_may_drop());
                `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Sending actual item:\n%s", act_req.sprint()), UVM_LOW)
                `uvm_send(act_req)
             end

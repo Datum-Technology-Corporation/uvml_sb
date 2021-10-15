@@ -70,19 +70,26 @@ task uvmt_sb_st_in_order_vseq_c::body();
       current_drop = $urandom_range(0,1);
       
       // Expected
-      `uvm_create_on(exp_req, p_sequencer.expected_sequencer);
-      exp_req.data = current_data;
-      exp_req.set_may_drop(current_drop);
-      `uvm_send(exp_req)
+      if (current_drop && $urandom_range(0,1)) begin
+         `uvm_info("IN_ORDER_VSEQ", $sformatf("Dropping expected item #%0d:\n%s", ii+1, exp_req.sprint()), UVM_LOW)
+         drop_count++;
+      end
+      else begin
+         `uvm_create_on(exp_req, p_sequencer.expected_sequencer);
+         exp_req.data = current_data;
+         exp_req.set_may_drop(current_drop);
+         `uvm_send(exp_req)
+      end
       
       // Actual
       if (current_drop && $urandom_range(0,1)) begin
-         `uvm_info("IN_ORDER_VSEQ", $sformatf("Dropping item #%0d:\n%s", ii+1, act_req.sprint()), UVM_LOW)
+         `uvm_info("IN_ORDER_VSEQ", $sformatf("Dropping actual item #%0d:\n%s", ii+1, act_req.sprint()), UVM_LOW)
          drop_count++;
       end
       else begin
          `uvm_create_on(act_req, p_sequencer.actual_sequencer);
          act_req.data = current_data;
+         act_req.set_may_drop(current_drop);
          `uvm_send(act_req)
       end
       
