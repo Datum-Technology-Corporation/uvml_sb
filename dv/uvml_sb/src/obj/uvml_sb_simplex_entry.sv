@@ -49,7 +49,7 @@ endclass : uvml_sb_simplex_entry_c
 function uvml_sb_simplex_entry_c::new(string name="uvml_sb_simplex_entry");
    
    super.new(name);
-   timestamp_expected = $realtime();
+   expected_timestamp = $realtime();
    
 endfunction : new
 

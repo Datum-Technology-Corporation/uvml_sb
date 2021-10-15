@@ -294,7 +294,8 @@ task uvml_sb_simplex_c::mode_in_order();
    end
    purge_may_drops(1'b1);
    entry = entry_t::type_id::create("entry");
-   entry.actual = act_trn;
+   entry.actual_trn = act_trn;
+   entry.actual_timestamp = $realtime();
    
    if (cntxt.exp_q.size() == 0) begin
       log_act_before_exp(act_trn);
@@ -310,7 +311,7 @@ task uvml_sb_simplex_c::mode_in_order();
          log_match(act_trn, exp_trn);
          cntxt.synced = 1;
          cntxt.match_count++;
-         entry.expected = exp_trn;
+         entry.expected_trn = exp_trn;
          entry.result = UVML_SB_ENTRY_RESULT_MATCH;
       end
       else begin
@@ -318,7 +319,7 @@ task uvml_sb_simplex_c::mode_in_order();
             void'(cntxt.exp_q.pop_front());
             log_drop(act_trn, exp_trn);
             //cntxt.dropped++;
-            entry.expected = exp_trn;
+            entry.expected_trn = exp_trn;
             entry.result = UVML_SB_ENTRY_RESULT_DROP;
          end
          else begin
@@ -348,7 +349,8 @@ task uvml_sb_simplex_c::mode_out_of_order();
       `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'act_obj' (%s) to 'act_trn' (%s)", $typename(act_obj), $typename(act_trn)))
    end
    entry = entry_t::type_id::create("entry");
-   entry.actual = act_trn;
+   entry.actual_trn = act_trn;
+   entry.actual_timestamp = $realtime();
    
    if (cntxt.exp_q.size() == 0) begin
       log_act_before_exp(act_trn);
@@ -370,7 +372,7 @@ task uvml_sb_simplex_c::mode_out_of_order();
       if (found_match) begin
          log_match(act_trn, exp_trn);
          cntxt.exp_q.delete(exp_match_idx);
-         entry.expected = exp_trn;
+         entry.expected_trn = exp_trn;
          entry.result = UVML_SB_ENTRY_RESULT_MATCH;
       end
       else begin
