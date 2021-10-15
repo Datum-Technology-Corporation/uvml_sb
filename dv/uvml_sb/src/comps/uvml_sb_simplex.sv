@@ -251,7 +251,7 @@ task uvml_sb_simplex_c::mode_in_order();
          cntxt.match_count++;
       end
       else begin
-         if (exp_trn.__may_drop) begin
+         if (exp_trn.get_may_drop()) begin
             log_drop(act_trn, exp_trn);
          end
          else begin

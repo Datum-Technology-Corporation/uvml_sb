@@ -48,7 +48,7 @@ class uvmt_sb_st_out_of_order_vseq_c extends uvmt_sb_st_base_vseq_c;
 endclass : uvmt_sb_st_out_of_order_vseq_c
 
 
-function uvmt_sb_st_in_order_seq_c::new(string name="uvmt_sb_st_out_of_order_vseq");
+function uvmt_sb_st_out_of_order_vseq_c::new(string name="uvmt_sb_st_out_of_order_vseq");
    
    super.new(name);
    
@@ -65,7 +65,7 @@ task uvmt_sb_st_out_of_order_vseq_c::body();
       begin
          foreach (thread_vseq[_ii]) begin
             fork
-               automatic int unsigned ii] = _ii];
+               automatic int unsigned ii = _ii;
                
                begin
                   `uvm_do_on(thread_vseq[ii], p_sequencer)

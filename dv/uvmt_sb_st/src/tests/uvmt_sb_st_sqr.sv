@@ -27,7 +27,7 @@ class uvmt_sb_st_sqr_c extends uvml_vsqr_c#(
    
    
    `uvm_component_utils_begin(uvmt_sb_st_sqr_c)
-      `uvm_utils_object(cfg, UVM_DEFAULT)
+      `uvm_field_object(cfg, UVM_DEFAULT)
    `uvm_component_utils_end
    
    

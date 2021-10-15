@@ -26,7 +26,7 @@ timeunit       1ns;
 timeprecision  1ps;
 
 // Interface(s)
-`include "uvmt_sb_clknrst_gen_if.sv"
+`include "uvmt_sb_st_clknrst_gen_if.sv"
 
 
 /**
@@ -48,13 +48,14 @@ package uvmt_sb_st_pkg;
    `include "uvmt_sb_st_vsqr.sv"
    
    // Objects
+   `include "uvmt_sb_st_test_cfg.sv"
    `include "uvmt_sb_st_seq_item.sv"
    
    // Sequences
+   `include "uvmt_sb_st_base_vseq.sv"
    `include "uvmt_sb_st_vseq_lib.sv"
    
    // Base test
-   `include "uvmt_sb_st_test_cfg.sv"
    `include "uvmt_sb_st_base_test.sv"
    `include "uvmt_sb_st_in_order_test.sv"
    `include "uvmt_sb_st_out_of_order_test.sv"

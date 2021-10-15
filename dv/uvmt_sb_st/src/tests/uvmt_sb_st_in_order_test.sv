@@ -54,8 +54,7 @@ endclass : uvmt_sb_st_in_order_test_c
 function uvmt_sb_st_in_order_test_c::new(string name="uvmt_sb_st_in_order_test", uvm_component parent=null);
    
    super.new(name, parent);
-   
-   in_order_vseq = uvme_sb_st_in_order_vseq_c::type_id::create("in_order_vseq");
+   in_order_vseq = uvmt_sb_st_in_order_vseq_c::type_id::create("in_order_vseq");
    
 endfunction : new
 

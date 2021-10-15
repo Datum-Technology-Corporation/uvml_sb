@@ -10,8 +10,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-`ifndef __UVMT_SB_ST_SEQ_LIB_SV__
-`define __UVMT_SB_ST_SEQ_LIB_SV__
+`ifndef __UVMT_SB_ST_VSEQ_LIB_SV__
+`define __UVMT_SB_ST_VSEQ_LIB_SV__
 
 
 `include "uvmt_sb_st_in_order_vseq.sv"
@@ -19,26 +19,26 @@
 
 
 /**
- * TODO Describe uvmt_sb_st_seq_lib_c
+ * TODO Describe uvmt_sb_st_vseq_lib_c
  */
-class uvmt_sb_st_seq_lib_c extends uvml_vseq_lib_c#(
+class uvmt_sb_st_vseq_lib_c extends uvml_vseq_lib_c#(
    .REQ(uvmt_sb_st_seq_item_c),
    .RSP(uvmt_sb_st_seq_item_c)
 );
    
-   `uvm_object_utils          (uvmt_sb_st_seq_lib_c)
-   `uvm_sequence_library_utils(uvmt_sb_st_seq_lib_c)
+   `uvm_object_utils          (uvmt_sb_st_vseq_lib_c)
+   `uvm_sequence_library_utils(uvmt_sb_st_vseq_lib_c)
    
    
    /**
     * Initializes sequence library
     */
-   extern function new(string name="uvmt_sb_st_seq_lib");
+   extern function new(string name="uvmt_sb_st_vseq_lib");
    
-endclass : uvmt_sb_st_seq_lib_c
+endclass : uvmt_sb_st_vseq_lib_c
 
 
-function uvmt_sb_st_seq_lib_c::new(string name="uvmt_sb_st_seq_lib");
+function uvmt_sb_st_vseq_lib_c::new(string name="uvmt_sb_st_vseq_lib");
    
    super.new(name);
    init_sequence_library();
@@ -49,4 +49,4 @@ function uvmt_sb_st_seq_lib_c::new(string name="uvmt_sb_st_seq_lib");
 endfunction : new
 
 
-`endif // __UVMT_SB_ST_SEQ_LIB_SV__
+`endif // __UVMT_SB_ST_VSEQ_LIB_SV__

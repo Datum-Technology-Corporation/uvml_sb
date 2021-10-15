@@ -21,13 +21,13 @@ class uvmt_sb_st_base_test_c extends uvm_test;
    
    // Objects
    rand uvmt_sb_st_test_cfg_c  test_cfg; ///< 
-   rand uvml_sb_simplex_cfg_c  sb_cfg  ; ///< 
-        uvml_sb_simplex_cfg_c  sb_cntxt; ///< 
+   rand uvml_sb_cfg_c          sb_cfg  ; ///< 
+        uvml_sb_cntxt_c        sb_cntxt; ///< 
         uvml_logs_rs_text_c    rs      ; ///< 
    
    // Components
-   uvmt_sb_st_vsqr_c  vsequencer; ///< 
-   uvml_sb_simplex_c  sb        ; ///< 
+   uvmt_sb_st_vsqr_c                          vsequencer; ///< 
+   uvml_sb_simplex_c#(uvmt_sb_st_seq_item_c)  sb        ; ///< 
    
    // Handle to clock generation interface
    virtual uvmt_sb_st_clknrst_gen_if  clknrst_gen_vif; ///< 
@@ -42,7 +42,7 @@ class uvmt_sb_st_base_test_c extends uvm_test;
    `include "uvmt_sb_st_base_test_workarounds.sv"
    
    constraint sb_cfg_cons {
-      sb-cfg.mode == test_cfg.sb_mode;
+      sb_cfg.mode == test_cfg.sb_mode;
    }
    
    
@@ -237,7 +237,7 @@ endfunction : retrieve_clknrst_gen_vif
 function void uvmt_sb_st_base_test_c::create_cfg();
    
    test_cfg = uvmt_sb_st_test_cfg_c::type_id::create("test_cfg");
-   sb_cfg   = uvml_sb_simplex_cfg_c::type_id::create("sb_cfg"  );
+   sb_cfg   = uvml_sb_cfg_c::type_id::create("sb_cfg"  );
    
 endfunction : create_cfg
 
@@ -248,7 +248,8 @@ function void uvmt_sb_st_base_test_c::randomize_test();
    if (!this.randomize()) begin
       `uvm_fatal("TEST", "Failed to randomize test");
    end
-   `uvm_info("TEST", $sformatf("Top-level environment configuration:\n%s", env_cfg.sprint()), UVM_NONE)
+   `uvm_info("TEST", $sformatf("Test configuration:\n%s", test_cfg.sprint()), UVM_NONE)
+   `uvm_info("TEST", $sformatf("Scoreboard configuration:\n%s", sb_cfg.sprint()), UVM_NONE)
    
 endfunction : randomize_test
 
@@ -264,8 +265,8 @@ endfunction : cfg_hrtbt_monitor
 
 function void uvmt_sb_st_base_test_c::assign_cfg();
    
-   uvm_config_db#(uvmt_sb_st_cfg_c)::set(this, "*", "cfg", test_cfg);
-   uvm_config_db#(uvml_sb_cfg_c   )::set(this, "*", "cfg", sb_cfg  );
+   uvm_config_db#(uvmt_sb_st_test_cfg_c)::set(this, "*", "cfg", test_cfg);
+   uvm_config_db#(uvml_sb_cfg_c        )::set(this, "*", "cfg", sb_cfg  );
    
 endfunction : assign_cfg
 
@@ -286,8 +287,8 @@ endfunction : assign_cntxt
 
 function void uvmt_sb_st_base_test_c::create_components();
    
-   vsequencer = uvmt_sb_st_vsqr_c::type_id::create("vsequencer", this);
-   sb         = uvml_sb_simplex_c::type_id::create("sb"        , this);
+   vsequencer = uvmt_sb_st_vsqr_c                        ::type_id::create("vsequencer", this);
+   sb         = uvml_sb_simplex_c#(uvmt_sb_st_seq_item_c)::type_id::create("sb"        , this);
    
 endfunction : create_components
 

@@ -35,7 +35,7 @@ class uvmt_sb_st_vsqr_c extends uvml_vsqr_c#(
    
    
    `uvm_component_utils_begin(uvmt_sb_st_vsqr_c)
-      `uvm_utils_object(cfg, UVM_DEFAULT)
+      `uvm_field_object(cfg, UVM_DEFAULT)
    `uvm_component_utils_end
    
    
@@ -72,7 +72,7 @@ function void uvmt_sb_st_vsqr_c::build_phase(uvm_phase phase);
    if (cfg == null) begin
       `uvm_fatal("CFG", "Configuration handle is null")
    end
-   uvm_config_db#(uvmt_sb_st_cfg_c)::set(this, "*", "cfg", test_cfg);
+   uvm_config_db#(uvmt_sb_st_test_cfg_c)::set(this, "*", "cfg", cfg);
    
    // Create components
    actual_sequencer   = uvmt_sb_st_sqr_c::type_id::create("actual_sequencer"  , this);

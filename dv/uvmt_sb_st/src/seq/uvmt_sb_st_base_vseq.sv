@@ -23,7 +23,7 @@ class uvmt_sb_st_base_vseq_c extends uvml_vseq_c#(
 );
    
    // Fields
-   uvmt_sb_st_test_cfg  cfg; ///< 
+   uvmt_sb_st_test_cfg_c  cfg; ///< 
    
    
    `uvm_object_utils_begin(uvmt_sb_st_base_vseq_c)
@@ -52,9 +52,9 @@ function uvmt_sb_st_base_vseq_c::new(string name="uvmt_sb_st_base_vseq");
 endfunction : new
 
 
-task uvme_st_base_vseq_c::pre_start();
+task uvmt_sb_st_base_vseq_c::pre_start();
    
-   cfg   = p_sequencer.cfg;
+   cfg = p_sequencer.cfg;
    
 endtask : pre_start
 

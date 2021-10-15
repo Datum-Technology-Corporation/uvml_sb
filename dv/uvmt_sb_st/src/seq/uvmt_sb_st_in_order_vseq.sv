@@ -34,7 +34,7 @@ class uvmt_sb_st_in_order_vseq_c extends uvmt_sb_st_base_vseq_c;
 endclass : uvmt_sb_st_in_order_vseq_c
 
 
-function uvmt_sb_st_in_order_seq_c::new(string name="uvmt_sb_st_in_order_vseq");
+function uvmt_sb_st_in_order_vseq_c::new(string name="uvmt_sb_st_in_order_vseq");
    
    super.new(name);
    
