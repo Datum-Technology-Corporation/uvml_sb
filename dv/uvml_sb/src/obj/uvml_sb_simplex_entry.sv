@@ -15,9 +15,9 @@
 
 
 /**
- * TODO Describe uvml_sb_entry_c
+ * TODO Describe uvml_sb_simplex_entry_c
  */
-class uvml_sb_entry_c #(
+class uvml_sb_simplex_entry_c #(
    type T_ACT_TRN  = uvm_object,
    type T_EXP_TRN  = T_ACT_TRN
 ) extends uvm_object;
@@ -28,7 +28,7 @@ class uvml_sb_entry_c #(
    uvml_sb_entry_result_enum  result   ; ///< 
    
    
-   `uvm_object_param_utils_begin(uvml_sb_entry_c#(.T_ACT_TRN(T_ACT_TRN), .T_EXP_TRN(T_EXP_TRN)))
+   `uvm_object_param_utils_begin(uvml_sb_simplex_entry_c#(.T_ACT_TRN(T_ACT_TRN), .T_EXP_TRN(T_EXP_TRN)))
       `uvm_field_real  (                           timestamp, UVM_DEFAULT)
       `uvm_field_object(                           actual   , UVM_DEFAULT)
       `uvm_field_object(                           expected , UVM_DEFAULT)
@@ -39,12 +39,12 @@ class uvml_sb_entry_c #(
    /**
     * Default constructor.
     */
-   extern function new(string name="uvml_sb_entry");
+   extern function new(string name="uvml_sb_simplex_entry");
    
-endclass : uvml_sb_entry_c
+endclass : uvml_sb_simplex_entry_c
 
 
-function uvml_sb_entry_c::new(string name="uvml_sb_entry");
+function uvml_sb_simplex_entry_c::new(string name="uvml_sb_simplex_entry");
    
    super.new(name);
    timestamp = $realtime();

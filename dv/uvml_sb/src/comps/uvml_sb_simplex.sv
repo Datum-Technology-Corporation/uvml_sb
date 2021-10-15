@@ -25,7 +25,7 @@ class uvml_sb_simplex_c#(
    /**
     * Scoreboarding entry type for this scoreboard
     */
-   typedef uvml_sb_entry_c #(
+   typedef uvml_sb_simplex_entry_c #(
       .T_ACT_TRN(T_ACT_TRN),
       .T_EXP_TRN(T_EXP_TRN)
    )  entry_t;

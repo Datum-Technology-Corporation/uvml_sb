@@ -35,7 +35,7 @@ package uvml_sb_pkg;
    // Objects
    `include "uvml_sb_simplex_cfg.sv"
    `include "uvml_sb_simplex_cntxt.sv"
-   `include "uvml_sb_entry.sv"
+   `include "uvml_sb_simplex_entry.sv"
    
    // Scoreboard components
    `include "uvml_sb_simplex.sv"
