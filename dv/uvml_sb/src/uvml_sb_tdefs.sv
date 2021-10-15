@@ -26,6 +26,7 @@ typedef enum {
  * 
  */
 typedef enum {
+   UVML_SB_ENTRY_REDULT_NO_ACTUAL  ,
    UVML_SB_ENTRY_RESULT_MATCH      ,
    UVML_SB_ENTRY_RESULT_DROP       ,
    UVML_SB_ENTRY_RESULT_MISMATCH   ,
