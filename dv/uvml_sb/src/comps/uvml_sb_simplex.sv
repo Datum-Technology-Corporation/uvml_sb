@@ -252,13 +252,18 @@ endtask: run_phase
 function void uvml_sb_simplex_c::extract_phase(uvm_phase phase);
    
    super.extract_phase(phase);
-   purge_may_drops();
+
+   if (cfg.enabled) begin
+      purge_may_drops();
+   end
    
 endfunction : extract_phase
 
 
 function void uvml_sb_simplex_c::check_phase(uvm_phase phase);
    
+   super.check_phase(phase);
+
    if (cfg.enabled) begin
       if (cntxt.exp_q.size() != 0) begin
          `uvm_error("SB_SIMPLEX", $sformatf("Expected queue is not empty! exp_q.size() = %0d", cntxt.exp_q.size()))
