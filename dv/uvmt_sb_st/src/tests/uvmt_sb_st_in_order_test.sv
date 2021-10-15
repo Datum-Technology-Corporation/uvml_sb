@@ -32,6 +32,7 @@ class uvmt_sb_st_in_order_test_c extends uvmt_sb_st_base_test_c;
    constraint test_cons {
       num_items                   >    0;
       num_items                   <= 100;
+      in_order_vseq.num_items     == num_items;
       test_cfg.sb_mode            == UVML_SB_MODE_IN_ORDER;
       test_cfg.num_actual_items   == num_items;
       test_cfg.num_expected_items == num_items;

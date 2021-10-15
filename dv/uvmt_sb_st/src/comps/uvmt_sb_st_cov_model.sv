@@ -10,20 +10,44 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Libraries
--f ${DV_UVM_SRC_PATH}/uvm_pkg.flist
--f ${DV_UVML_SRC_PATH}/uvml_pkg.flist
--f ${DV_UVML_LOGS_SRC_PATH}/uvml_logs_pkg.flist
+`ifndef __UVMT_SB_ST_COV_MODEL_SV__
+`define __UVMT_SB_ST_COV_MODEL_SV__
 
-// Target library
--f ${DV_UVML_SB_SRC_PATH}/uvml_sb_pkg.flist
 
-// Scoreboarding Library test bench Directories
-+incdir+${DV_UVMT_SB_ST_SRC_PATH}
-+incdir+${DV_UVMT_SB_ST_SRC_PATH}/comps
-+incdir+${DV_UVMT_SB_ST_SRC_PATH}/seq
-+incdir+${DV_UVMT_SB_ST_SRC_PATH}/tb
-+incdir+${DV_UVMT_SB_ST_SRC_PATH}/tests
+/**
+ * TODO Describe uvmt_sb_st_cov_model_c
+ */
+class uvmt_sb_st_cov_model_c extends uvm_component;
+   
+   // Fields
+   
+   
+   
+   `uvm_component_utils_begin(uvmt_sb_st_cov_model_c)
+      // UVM Field Util Macros
+   `uvm_component_utils_end
+   
+   
+   // Constraints
+   
+   
+   
+   /**
+    * Default constructor.
+    */
+   extern function new(string name="uvmt_sb_st_cov_model", uvm_component parent=null);
+   
+   // Methods
+   
+   
+endclass : uvmt_sb_st_cov_model_c
 
-// Scoreboarding Library tests (includes constants/macros/types meant for test bench)
-${DV_UVMT_SB_ST_SRC_PATH}/uvmt_sb_st_pkg.sv
+
+function uvmt_sb_st_cov_model_c::new(string name="uvmt_sb_st_cov_model", uvm_component parent=null);
+   
+   super.new(name, parent);
+   
+endfunction : new
+
+
+`endif // __UVMT_SB_ST_COV_MODEL_SV__

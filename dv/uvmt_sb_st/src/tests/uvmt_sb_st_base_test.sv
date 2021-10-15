@@ -20,10 +20,10 @@
 class uvmt_sb_st_base_test_c extends uvm_test;
    
    // Objects
-   rand uvmt_sb_st_test_cfg_c  test_cfg; ///< 
-   rand uvml_sb_cfg_c          sb_cfg  ; ///< 
-        uvml_sb_cntxt_c        sb_cntxt; ///< 
-        uvml_logs_rs_text_c    rs      ; ///< 
+   rand uvmt_sb_st_test_cfg_c    test_cfg; ///< 
+   rand uvml_sb_simplex_cfg_c    sb_cfg  ; ///< 
+        uvml_sb_simplex_cntxt_c  sb_cntxt; ///< 
+        uvml_logs_rs_text_c      rs      ; ///< 
    
    // Components
    uvmt_sb_st_vsqr_c                          vsequencer; ///< 
@@ -237,7 +237,7 @@ endfunction : retrieve_clknrst_gen_vif
 function void uvmt_sb_st_base_test_c::create_cfg();
    
    test_cfg = uvmt_sb_st_test_cfg_c::type_id::create("test_cfg");
-   sb_cfg   = uvml_sb_cfg_c::type_id::create("sb_cfg"  );
+   sb_cfg   = uvml_sb_simplex_cfg_c::type_id::create("sb_cfg"  );
    
 endfunction : create_cfg
 
@@ -266,21 +266,21 @@ endfunction : cfg_hrtbt_monitor
 function void uvmt_sb_st_base_test_c::assign_cfg();
    
    uvm_config_db#(uvmt_sb_st_test_cfg_c)::set(this, "*", "cfg", test_cfg);
-   uvm_config_db#(uvml_sb_cfg_c        )::set(this, "*", "cfg", sb_cfg  );
+   uvm_config_db#(uvml_sb_simplex_cfg_c        )::set(this, "*", "cfg", sb_cfg  );
    
 endfunction : assign_cfg
 
 
 function void uvmt_sb_st_base_test_c::create_cntxt();
    
-   sb_cntxt = uvml_sb_cntxt_c::type_id::create("sb_cntxt");
+   sb_cntxt = uvml_sb_simplex_cntxt_c::type_id::create("sb_cntxt");
    
 endfunction : create_cntxt
 
 
 function void uvmt_sb_st_base_test_c::assign_cntxt();
    
-   uvm_config_db#(uvml_sb_cntxt_c)::set(this, "*", "cntxt", sb_cntxt);
+   uvm_config_db#(uvml_sb_simplex_cntxt_c)::set(this, "*", "cntxt", sb_cntxt);
    
 endfunction : assign_cntxt
 

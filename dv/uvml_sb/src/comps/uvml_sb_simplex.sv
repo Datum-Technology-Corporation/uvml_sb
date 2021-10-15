@@ -22,18 +22,27 @@ class uvml_sb_simplex_c#(
    type T_EXP_TRN  = T_ACT_TRN
 ) extends uvm_scoreboard;
    
+   /**
+    * Scoreboarding entry type for this scoreboard
+    */
+   typedef uvml_sb_entry_c #(
+      .T_ACT_TRN(T_ACT_TRN),
+      .T_EXP_TRN(T_EXP_TRN)
+   )  entry_t;
+   
    // Objects
-   uvml_sb_cfg_c    cfg  ; ///< Handle to scoreboard configuration
-   uvml_sb_cntxt_c  cntxt; ///< Handle to scoreboard context
+   uvml_sb_simplex_cfg_c    cfg  ; ///< Handle to scoreboard configuration
+   uvml_sb_simplex_cntxt_c  cntxt; ///< Handle to scoreboard context
    
    // TLM
-   uvm_analysis_export  #(T_ACT_TRN)  act_export; // TODO Describe uvml_sb_simplex_c::act_export
-   uvm_analysis_export  #(T_EXP_TRN)  exp_export; // TODO Describe uvml_sb_simplex_c::exp_export
-   uvm_tlm_analysis_fifo#(T_ACT_TRN)  act_fifo  ; // TODO Describe uvml_sb_simplex_c::act_fifo
-   uvm_tlm_analysis_fifo#(T_EXP_TRN)  exp_fifo  ; // TODO Describe uvml_sb_simplex_c::exp_fifo
+   uvm_analysis_export  #(T_ACT_TRN)  act_export; ///< TODO Describe uvml_sb_simplex_c::act_export
+   uvm_analysis_export  #(T_EXP_TRN)  exp_export; ///< TODO Describe uvml_sb_simplex_c::exp_export
+   uvm_tlm_analysis_fifo#(T_ACT_TRN)  act_fifo  ; ///< TODO Describe uvml_sb_simplex_c::act_fifo
+   uvm_tlm_analysis_fifo#(T_EXP_TRN)  exp_fifo  ; ///< TODO Describe uvml_sb_simplex_c::exp_fifo
+   uvm_analysis_port    #(entry_t  )  ap        ; ///< TODO Describe uvml_sb_simplex_c::ap
    
    
-   `uvm_component_param_utils_begin(uvml_sb_simplex_c#(T_ACT_TRN, T_EXP_TRN))
+   `uvm_component_param_utils_begin(uvml_sb_simplex_c#(.T_ACT_TRN(T_ACT_TRN), .T_EXP_TRN(T_EXP_TRN)))
       `uvm_field_object(cfg  , UVM_DEFAULT)
       `uvm_field_object(cntxt, UVM_DEFAULT)
    `uvm_component_utils_end
@@ -63,6 +72,11 @@ class uvml_sb_simplex_c#(
     * TODO Describe uvml_sb_simplex_c::check_phase()
     */
    extern virtual function void check_phase(uvm_phase phase);
+
+   /**
+    * TODO Describe uvml_sb_simplex_c::extract_phase()
+    */
+   extern virtual function void extract_phase(uvm_phase phase);
 
    /**
     * TODO Describe uvml_sb_simplex_c::mode_in_order()
@@ -125,6 +139,11 @@ class uvml_sb_simplex_c#(
    extern virtual function void log_drop(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
    
    /**
+    * TODO Describe uvml_sb_simplex_c::log_sync_loss()
+    */
+   extern virtual function void log_sync_loss(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
+   
+   /**
     * TODO Describe uvml_sb_simplex_c::on_new_act()
     */
    extern virtual task on_new_act(ref T_ACT_TRN trn);
@@ -133,6 +152,16 @@ class uvml_sb_simplex_c#(
     * TODO Describe uvml_sb_simplex_c::on_new_exp()
     */
    extern virtual task on_new_exp(ref T_EXP_TRN trn);
+   
+   /**
+    * TODO Describe uvml_sb_simplex_c::on_sync_loss()
+    */
+   extern virtual task on_sync_loss(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
+   
+   /**
+    * TODO Describe uvml_sb_simplex_c::purge_may_drops()
+    */
+   extern function void purge_may_drops(input bit skip_tail=0);
    
 endclass : uvml_sb_simplex_c
 
@@ -148,12 +177,12 @@ function void uvml_sb_simplex_c::build_phase(uvm_phase phase);
    
    super.build_phase(phase);
    
-   void'(uvm_config_db#(uvml_sb_cfg_c)::get(this, "", "cfg", cfg));
+   void'(uvm_config_db#(uvml_sb_simplex_cfg_c)::get(this, "", "cfg", cfg));
    if (cfg == null) begin
       `uvm_fatal("CFG", "Configuration handle is null")
    end
    
-   void'(uvm_config_db#(uvml_sb_cntxt_c)::get(this, "", "cntxt", cntxt));
+   void'(uvm_config_db#(uvml_sb_simplex_cntxt_c)::get(this, "", "cntxt", cntxt));
    if (cntxt == null) begin
       `uvm_fatal("CNTXT", "Context handle is null")
    end
@@ -163,6 +192,7 @@ function void uvml_sb_simplex_c::build_phase(uvm_phase phase);
    exp_export  = new("exp_export", this);
    act_fifo    = new("act_fifo"  , this);
    exp_fifo    = new("exp_fifo"  , this);
+   ap          = new("ap"        , this);
    
 endfunction : build_phase
 
@@ -171,9 +201,11 @@ function void uvml_sb_simplex_c::connect_phase(uvm_phase phase);
    
    super.connect_phase(phase);
    
-   // Connect TLM objects
-   act_export.connect(act_fifo.analysis_export);
-   exp_export.connect(exp_fifo.analysis_export);
+   if (cfg.enabled) begin
+      // Connect TLM objects
+      act_export.connect(act_fifo.analysis_export);
+      exp_export.connect(exp_fifo.analysis_export);
+   end
    
 endfunction: connect_phase
 
@@ -181,45 +213,62 @@ endfunction: connect_phase
 task uvml_sb_simplex_c::run_phase(uvm_phase phase);
    
    T_EXP_TRN  exp_trn;
+   T_ACT_TRN  act_trn;
    
    super.run_phase(phase);
    
    if (cfg.enabled) begin
       fork
-         forever begin
-            case (cfg.mode)
-               UVML_SB_MODE_IN_ORDER    : mode_in_order    ();
-               UVML_SB_MODE_OUT_OF_ORDER: mode_out_of_order();
-                
-               default: begin
-                  `uvm_error("SB", $sformatf("Invalid cfg.mode:%0d", cfg.mode))
-               end
-            endcase
+         begin : exp
+            forever begin
+               get_exp       (exp_trn);
+               calc_exp_stats(exp_trn);
+               log_new_exp   (exp_trn);
+            end
          end
          
-         forever begin
-            get_exp       (exp_trn);
-            calc_exp_stats(exp_trn);
-            log_new_exp   (exp_trn);
+         begin : act
+            forever begin
+               get_act       (act_trn);
+               calc_act_stats(act_trn);
+               log_new_act   (act_trn);
+               
+               case (cfg.mode)
+                  UVML_SB_MODE_IN_ORDER    : mode_in_order    ();
+                  UVML_SB_MODE_OUT_OF_ORDER: mode_out_of_order();
+                   
+                  default: begin
+                     `uvm_error("SB_SIMPLEX", $sformatf("Invalid cfg.mode:%0d", cfg.mode))
+                  end
+               endcase
+            end
          end
-      join_none
+      join
    end
    
 endtask: run_phase
+
+
+function void uvml_sb_simplex_c::extract_phase(uvm_phase phase);
+   
+   super.extract_phase(phase);
+   purge_may_drops();
+   
+endfunction : extract_phase
 
 
 function void uvml_sb_simplex_c::check_phase(uvm_phase phase);
    
    if (cfg.enabled) begin
       if (cntxt.exp_q.size() != 0) begin
-         `uvm_error("SB", $sformatf("Expected queue is not empty! exp_q.size() = %0d", cntxt.exp_q.size()))
+         `uvm_error("SB_SIMPLEX", $sformatf("Expected queue is not empty! exp_q.size() = %0d", cntxt.exp_q.size()))
          foreach(cntxt.exp_q[ii]) begin
-            `uvm_info("SB", $sformatf("exp_q[%0d]: \n%s", ii, cntxt.exp_q[ii].sprint()), UVM_MEDIUM)
+            `uvm_info("SB_SIMPLEX", $sformatf("exp_q[%0d]: \n%s", ii, cntxt.exp_q[ii].sprint()), UVM_MEDIUM)
          end
       end
       
       if (cntxt.match_count == 0) begin
-         `uvm_error("SB", "Scoreboard did not see any matches during simulation")
+         `uvm_error("SB_SIMPLEX", "Scoreboard did not see any matches during simulation")
       end
    end
    
@@ -230,84 +279,109 @@ task uvml_sb_simplex_c::mode_in_order();
    
    T_ACT_TRN   act_trn;
    T_EXP_TRN   exp_trn;
+   uvm_object  act_obj;
    uvm_object  exp_obj;
-   bit         found_match = 0;
+   entry_t     entry;
    
-   get_act       (act_trn);
-   calc_act_stats(act_trn);
-   log_new_act   (act_trn);
+   act_obj = cntxt.act_q.pop_front();
+   if (!$cast(act_trn, act_obj)) begin
+      `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'act_obj' (%s) to 'act_trn' (%s)", $typename(act_obj), $typename(act_trn)))
+   end
+   purge_may_drops(1'b1);
+   entry = entry_t::type_id::create("entry");
+   entry.actual = act_trn;
    
    if (cntxt.exp_q.size() == 0) begin
       log_act_before_exp(act_trn);
+      entry.result = UVML_SB_ENTRY_RESULT_NO_EXPECTED;
    end
    else begin
-      exp_obj = cntxt.exp_q.pop_front();
+      exp_obj = cntxt.exp_q[0];
       if (!$cast(exp_trn, exp_obj)) begin
-         `uvm_fatal("SB", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
+         `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
       end
       if (exp_trn.compare(act_trn)) begin
+         void'(cntxt.exp_q.pop_front());
          log_match(act_trn, exp_trn);
          cntxt.synced = 1;
          cntxt.match_count++;
+         entry.expected = exp_trn;
+         entry.result = UVML_SB_ENTRY_RESULT_MATCH;
       end
       else begin
          if (exp_trn.get_may_drop()) begin
+            void'(cntxt.exp_q.pop_front());
             log_drop(act_trn, exp_trn);
+            //cntxt.dropped++;
+            entry.expected = exp_trn;
+            entry.result = UVML_SB_ENTRY_RESULT_DROP;
          end
          else begin
             log_mismatch(act_trn, exp_trn);
+            cntxt.missed_count++;
+            entry.result = UVML_SB_ENTRY_RESULT_MISMATCH;
          end
       end
    end
+   
+   ap.write(entry);
    
 endtask : mode_in_order
 
 
 task uvml_sb_simplex_c::mode_out_of_order();
    
-   // TODO Fix uvml_sb_simplex_c::mode_out_of_order()
    T_ACT_TRN     act_trn;
    T_EXP_TRN     exp_trn;
    uvm_object    act_obj, exp_obj;
    bit           found_match = 0;
-   int unsigned  act_match_idx = 0;
    int unsigned  exp_match_idx = 0;
+   entry_t       entry;
    
-   get_act       (act_trn);
-   calc_act_stats(act_trn);
-   log_new_act   (act_trn);
-   act_match_idx = cntxt.act_q.size()-1;
+   act_obj = cntxt.act_q.pop_front();
+   if (!$cast(act_trn, act_obj)) begin
+      `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'act_obj' (%s) to 'act_trn' (%s)", $typename(act_obj), $typename(act_trn)))
+   end
+   entry = entry_t::type_id::create("entry");
+   entry.actual = act_trn;
    
    if (cntxt.exp_q.size() == 0) begin
       log_act_before_exp(act_trn);
+      entry.result = UVML_SB_ENTRY_RESULT_NO_EXPECTED;
    end
    else begin
       foreach (cntxt.exp_q[ii]) begin
          exp_obj = cntxt.exp_q[ii];
-         if (exp_obj.compare(act_trn)) begin
+         if (!$cast(exp_trn, exp_obj)) begin
+            `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
+         end
+         if (exp_trn.compare(act_trn)) begin
             exp_match_idx = ii;
             found_match = 1;
             cntxt.match_count++;
-            if (!$cast(exp_trn, exp_obj)) begin
-               `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
-            end
             break;
          end
       end
       if (found_match) begin
          log_match(act_trn, exp_trn);
          cntxt.exp_q.delete(exp_match_idx);
-         cntxt.act_q.delete(act_match_idx);
+         entry.expected = exp_trn;
+         entry.result = UVML_SB_ENTRY_RESULT_MATCH;
       end
       else begin
-         if (exp_trn.get_may_drop()) begin
+         if (act_trn.get_may_drop()) begin
             log_drop(act_trn);
+            entry.result = UVML_SB_ENTRY_RESULT_DROP;
          end
          else begin
             log_mismatch(act_trn);
+            cntxt.missed_count++;
+            entry.result = UVML_SB_ENTRY_RESULT_MISMATCH;
          end
       end
    end
+   
+   ap.write(entry);
    
 endtask : mode_out_of_order
 
@@ -316,7 +390,6 @@ task uvml_sb_simplex_c::get_act(output T_ACT_TRN trn);
    
    act_fifo.get(trn);
    on_new_act  (trn);
-   `uvml_hrtbt()
    cntxt.act_observed_e.trigger(trn);
    
 endtask : get_act
@@ -339,7 +412,7 @@ function void uvml_sb_simplex_c::calc_act_stats(ref T_ACT_TRN trn);
    cntxt.act_observed++;
    cntxt.act_bits_observed += packed_trn.size();
    
-   if (trn.__has_error) begin
+   if (trn.has_error()) begin
       cntxt.act_bad_observed++;
       cntxt.act_bad_bits_observed += packed_trn.size();
    end
@@ -362,7 +435,7 @@ function void uvml_sb_simplex_c::calc_exp_stats(ref T_EXP_TRN trn);
    cntxt.exp_observed++;
    cntxt.exp_bits_observed += packed_trn.size();
    
-   if (trn.__has_error) begin
+   if (trn.has_error()) begin
       cntxt.exp_bad_observed++;
       cntxt.exp_bad_bits_observed += packed_trn.size();
    end
@@ -379,28 +452,28 @@ endfunction : calc_exp_stats
 
 function void uvml_sb_simplex_c::log_new_act(ref T_ACT_TRN trn);
    
-   `uvm_info("SB", $sformatf("New actual transaction from %s: \n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
+   `uvm_info("SB_SIMPLEX", $sformatf("New actual transaction from %s: \n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
    
 endfunction : log_new_act
 
 
 function void uvml_sb_simplex_c::log_new_exp(ref T_EXP_TRN trn);
    
-   `uvm_info("SB", $sformatf("New expected transaction from %s: \n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
+   `uvm_info("SB_SIMPLEX", $sformatf("New expected transaction from %s: \n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
    
 endfunction : log_new_exp
 
 
 function void uvml_sb_simplex_c::log_act_before_exp(ref T_ACT_TRN trn);
    
-   `uvm_error("SB", $sformatf("Actual received before expected:\n%s", trn.sprint()))
+   `uvm_error("SB_SIMPLEX", $sformatf("Actual received before expected:\n%s", trn.sprint()))
    
 endfunction : log_act_before_exp
 
 
 function void uvml_sb_simplex_c::log_match(ref T_ACT_TRN act_trn, T_EXP_TRN exp_trn);
    
-   `uvm_info("SB", "Actual and Expected match!", UVM_HIGH)
+   `uvm_info("SB_SIMPLEX", "Actual and Expected match!", UVM_HIGH)
    
 endfunction : log_match
 
@@ -408,10 +481,10 @@ endfunction : log_match
 function void uvml_sb_simplex_c::log_mismatch(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
    
    if (exp_trn != null) begin
-      `uvm_error("SB", $sformatf("Actual and Expected do not match: \nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
+      `uvm_error("SB_SIMPLEX", $sformatf("Actual and Expected do not match: \nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
    end
    else begin
-      `uvm_error("SB", $sformatf("Did not find match for Actual:\n%s", act_trn.sprint()))
+      `uvm_error("SB_SIMPLEX", $sformatf("Did not find match for Actual:\n%s", act_trn.sprint()))
    end
    
 endfunction : log_mismatch
@@ -420,27 +493,73 @@ endfunction : log_mismatch
 function void uvml_sb_simplex_c::log_drop(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
    
    if (exp_trn != null) begin
-      `uvm_warning("SB", $sformatf("Actual and Expected do not match, may_drop=1: \nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
+      `uvm_warning("SB_SIMPLEX", $sformatf("Actual and Expected do not match, but expected is marked as 'may drop':\nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
    end
    else begin
-      `uvm_warning("SB", $sformatf("Did not find match for Actual, but may_drop=1:\n%s", act_trn.sprint()))
+      `uvm_warning("SB_SIMPLEX", $sformatf("Did not find match for Actual, but actual is marked as 'may drop':\n%s", act_trn.sprint()))
    end
    
 endfunction : log_drop
 
 
+function void uvml_sb_simplex_c::log_sync_loss(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
+   
+   if (exp_trn != null) begin
+      `uvm_error("SB_SIMPLEX", $sformatf("Loss of sync.\nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
+   end
+   else begin
+      `uvm_error("SB_SIMPLEX", $sformatf("Loss of sync with no Expected.  Actual:\n%s", act_trn.sprint()))
+   end
+   
+endfunction : log_sync_loss
+
+
 task uvml_sb_simplex_c::on_new_act(ref T_ACT_TRN trn);
    
-   // Default implementation is to do nothing
+   
    
 endtask : on_new_act
 
 
 task uvml_sb_simplex_c::on_new_exp(ref T_EXP_TRN trn);
    
-   // Default implementation is to do nothing
+   
    
 endtask : on_new_exp
+
+
+task uvml_sb_simplex_c::on_sync_loss(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn);
+   
+   
+   
+endtask : on_sync_loss
+
+
+function void uvml_sb_simplex_c::purge_may_drops(input bit skip_tail=0);
+   
+   int unsigned  may_drops[$];
+   T_EXP_TRN     exp_trn;
+   uvm_object    exp_obj;
+   
+   foreach (cntxt.exp_q[ii]) begin
+      if (skip_tail && (ii == (cntxt.exp_q.size()-1))) begin
+         continue;
+      end
+      
+      exp_obj = cntxt.exp_q[ii];
+      if (!$cast(exp_trn, exp_obj)) begin
+         `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
+      end
+      if (exp_trn.get_may_drop()) begin
+         may_drops.push_back(ii);
+      end
+   end
+   
+   foreach (may_drops[ii]) begin
+      cntxt.exp_q.delete(may_drops[ii]);
+   end
+   
+endfunction : purge_may_drops
 
 
 `endif // __UVML_SB_SIMPLEX_SV__

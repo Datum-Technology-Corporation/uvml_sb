@@ -29,12 +29,13 @@ package uvml_sb_pkg;
    import uvml_pkg::*;
    
    // Constants / Structs / Enums
-   `include "uvml_sb_constants.sv"
    `include "uvml_sb_tdefs.sv"
+   `include "uvml_sb_constants.sv"
    
    // Objects
-   `include "uvml_sb_cfg.sv"
-   `include "uvml_sb_cntxt.sv"
+   `include "uvml_sb_simplex_cfg.sv"
+   `include "uvml_sb_simplex_cntxt.sv"
+   `include "uvml_sb_entry.sv"
    
    // Scoreboard components
    `include "uvml_sb_simplex.sv"

@@ -20,6 +20,7 @@
 
 // Scoreboarding Library test bench Directories
 -i ${DV_UVMT_SB_ST_SRC_PATH}
+-i ${DV_UVMT_SB_ST_SRC_PATH}/comps
 -i ${DV_UVMT_SB_ST_SRC_PATH}/seq
 -i ${DV_UVMT_SB_ST_SRC_PATH}/tb
 -i ${DV_UVMT_SB_ST_SRC_PATH}/tests

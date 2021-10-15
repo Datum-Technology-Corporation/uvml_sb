@@ -10,57 +10,41 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-`ifndef __UVMT_SB_ST_SQR_SV__
-`define __UVMT_SB_ST_SQR_SV__
+`ifndef __UVMT_SB_ST_ENTRY_LOGGER_SV__
+`define __UVMT_SB_ST_ENTRY_LOGGER_SV__
 
 
 /**
- * TODO Describe uvmt_sb_st_sqr_c
+ * TODO Describe uvmt_sb_st_entry_logger_c
  */
-class uvmt_sb_st_sqr_c extends uvml_vsqr_c#(
-   .REQ(uvmt_sb_st_seq_item_c),
-   .RSP(uvmt_sb_st_seq_item_c)
-);
+class uvmt_sb_st_entry_logger_c extends uvm_subscriber #(uvmt_sb_st_entry_t);
    
-   // Objects
-   uvmt_sb_st_test_cfg_c  cfg; ///< 
+   // Fields
    
    
-   `uvm_component_utils_begin(uvmt_sb_st_sqr_c)
-      `uvm_field_object(cfg, UVM_DEFAULT)
+   
+   `uvm_component_utils_begin(uvmt_sb_st_entry_logger_c)
+      // UVM Field Util Macros
    `uvm_component_utils_end
+   
    
    
    /**
     * Default constructor.
     */
-   extern function new(string name="uvmt_sb_st_sqr", uvm_component parent=null);
+   extern function new(string name="uvmt_sb_st_entry_logger", uvm_component parent=null);
    
-   /**
-    * TODO Describe uvmt_sb_st_sqr_c::build_phase()
-    */
-   extern virtual function void build_phase(uvm_phase phase);
+   // Methods
    
-endclass : uvmt_sb_st_sqr_c
+   
+endclass : uvmt_sb_st_entry_logger_c
 
 
-function uvmt_sb_st_sqr_c::new(string name="uvmt_sb_st_sqr", uvm_component parent=null);
+function uvmt_sb_st_entry_logger_c::new(string name="uvmt_sb_st_entry_logger", uvm_component parent=null);
    
    super.new(name, parent);
    
 endfunction : new
 
 
-function void uvmt_sb_st_sqr_c::build_phase(uvm_phase phase);
-   
-   super.build_phase(phase);
-   
-   void'(uvm_config_db#(uvmt_sb_st_test_cfg_c)::get(this, "", "cfg", cfg));
-   if (cfg == null) begin
-      `uvm_fatal("CFG", "Configuration handle is null")
-   end
-   
-endfunction : build_phase
-
-
-`endif // __UVMT_SB_ST_SQR_SV__
+`endif // __UVMT_SB_ST_ENTRY_LOGGER_SV__

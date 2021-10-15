@@ -19,19 +19,20 @@
  */
 class uvmt_sb_st_out_of_order_vseq_c extends uvmt_sb_st_base_vseq_c;
    
-   rand int unsigned                num_threads  ; ///< 
-        uvmt_sb_st_in_order_vseq_c  thread_vseq[]; ///< 
+   rand int unsigned           num_items  ; ///< 
+        uvmt_sb_st_seq_item_c  sent_exp[$]; ///< 
+        int unsigned           drop_count ; ///< 
    
    
    `uvm_object_utils_begin(uvmt_sb_st_out_of_order_vseq_c)
-      `uvm_field_int         (num_threads, UVM_DEFAULT + UVM_DEC)
-      `uvm_field_array_object(thread_vseq, UVM_DEFAULT          )
+      `uvm_field_int         (num_items, UVM_DEFAULT + UVM_DEC)
+      `uvm_field_queue_object(sent_exp , UVM_DEFAULT          )
    `uvm_object_utils_end
    
    
    constraint limits_cons {
-      num_threads > 0;
-      num_threads <= 10;
+      num_items >    0;
+      num_items <= 100;
    }
    
    
@@ -51,28 +52,57 @@ endclass : uvmt_sb_st_out_of_order_vseq_c
 function uvmt_sb_st_out_of_order_vseq_c::new(string name="uvmt_sb_st_out_of_order_vseq");
    
    super.new(name);
+   drop_count = 0;
    
 endfunction : new
 
 
 task uvmt_sb_st_out_of_order_vseq_c::body();
    
-   thread_vseq = new[num_threads];
-   p_sequencer.set_arbitration(UVM_SEQ_ARB_RANDOM);
-   `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Starting %0d threads of items", num_threads), UVM_LOW)
+   uvmt_sb_st_seq_item_c  act_req     ;
+   uvmt_sb_st_seq_item_c  exp_req     ;
+   uvmt_sb_st_seq_item_c  sent_req    ;
+   int unsigned           current_data;
+   int unsigned           sent_size   ;
+   bit                    current_drop;
    
    fork
-      begin
-         foreach (thread_vseq[_ii]) begin
-            fork
-               automatic int unsigned ii = _ii;
-               
-               begin
-                  `uvm_do_on(thread_vseq[ii], p_sequencer)
-               end
-            join_none
+      begin : expected
+         for (int unsigned ii=0; ii<num_items; ii++) begin
+            #10ns;
+            
+            current_data = $urandom();
+            current_drop = $urandom_range(0,1);
+            `uvm_create_on(exp_req, p_sequencer.expected_sequencer);
+            exp_req.data = current_data;
+            exp_req.set_may_drop(current_drop);
+            `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Sending expected item %0d of %0d:\n%s", ii+1, num_items, exp_req.sprint()), UVM_LOW)
+            `uvm_send(exp_req)
+            sent_exp.push_back(exp_req);
          end
-         wait fork;
+      end
+      
+      begin : actual
+         do begin
+            #30ns;
+            
+            if (sent_exp.size() == 0) begin
+               `uvm_fatal("OUT_OF_ORDER_VSEQ", "Buffer underrun on sent_exp")
+            end
+            sent_exp.shuffle();
+            sent_req = sent_exp.pop_front();
+            
+            if (sent_req.get_may_drop() && $urandom_range(0,1)) begin
+               `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Dropping item:\n%s", sent_req.sprint()), UVM_LOW)
+               drop_count++;
+            end
+            else begin
+               `uvm_create_on(act_req, p_sequencer.actual_sequencer);
+               act_req.data = sent_req.data;
+               `uvm_info("OUT_OF_ORDER_VSEQ", $sformatf("Sending actual item:\n%s", act_req.sprint()), UVM_LOW)
+               `uvm_send(act_req)
+            end
+         end while (sent_exp.size());
       end
    join
    

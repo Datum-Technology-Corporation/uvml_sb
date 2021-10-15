@@ -10,49 +10,46 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-`ifndef __UVML_SB_CFG_SV__
-`define __UVML_SB_CFG_SV__
+`ifndef __UVML_SB_ENTRY_SV__
+`define __UVML_SB_ENTRY_SV__
 
 
 /**
- * TODO Describe uvml_sb_cfg_c
+ * TODO Describe uvml_sb_entry_c
  */
-class uvml_sb_cfg_c extends uvm_object;
+class uvml_sb_entry_c #(
+   type T_ACT_TRN  = uvm_object,
+   type T_EXP_TRN  = T_ACT_TRN
+) extends uvm_object;
    
-   rand bit                enabled;
-   rand uvml_sb_mode_enum  mode;
-   rand int unsigned       ignore_first_n_act;
-   rand int unsigned       ignore_first_n_exp;
+   realtime                   timestamp; ///< 
+   T_ACT_TRN                  actual   ; ///< 
+   T_EXP_TRN                  expected ; ///< 
+   uvml_sb_entry_result_enum  result   ; ///< 
    
    
-   
-   `uvm_object_utils_begin(uvml_sb_cfg_c)
-      `uvm_field_int (                   enabled           , UVM_DEFAULT)
-      `uvm_field_enum(uvml_sb_mode_enum, mode              , UVM_DEFAULT)
-      `uvm_field_int (                   ignore_first_n_act, UVM_DEFAULT)
-      `uvm_field_int (                   ignore_first_n_exp, UVM_DEFAULT)
+   `uvm_object_param_utils_begin(uvml_sb_entry_c#(.T_ACT_TRN(T_ACT_TRN), .T_EXP_TRN(T_EXP_TRN)))
+      `uvm_field_real  (                           timestamp, UVM_DEFAULT)
+      `uvm_field_object(                           actual   , UVM_DEFAULT)
+      `uvm_field_object(                           expected , UVM_DEFAULT)
+      `uvm_field_enum  (uvml_sb_entry_result_enum, result   , UVM_DEFAULT)
    `uvm_object_utils_end
    
    
-   constraint defaults_cons {
-      soft ignore_first_n_act == 0;
-      soft ignore_first_n_exp == 0;
-   }
-   
-   
    /**
-    * Default constructor
+    * Default constructor.
     */
-   extern function new(string name="uvml_sb_cfg");
+   extern function new(string name="uvml_sb_entry");
    
-endclass : uvml_sb_cfg_c
+endclass : uvml_sb_entry_c
 
 
-function uvml_sb_cfg_c::new(string name="uvml_sb_cfg");
-  
-  super.new(name);
-  
+function uvml_sb_entry_c::new(string name="uvml_sb_entry");
+   
+   super.new(name);
+   timestamp = $realtime();
+   
 endfunction : new
 
 
-`endif // __UVML_SB_CFG_SV__
+`endif // __UVML_SB_ENTRY_SV__

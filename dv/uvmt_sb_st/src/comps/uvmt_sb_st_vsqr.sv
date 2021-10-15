@@ -96,7 +96,8 @@ task uvmt_sb_st_vsqr_c::run_phase(uvm_phase phase);
          forever begin
             actual_sequencer.get_next_item(actual_item);
             actual_ap       .write        (actual_item);
-            actual_sequencer.item_done    (actual_item);
+            actual_sequencer.item_done    ();
+            `uvml_hrtbt()
          end
       end
       
@@ -104,7 +105,8 @@ task uvmt_sb_st_vsqr_c::run_phase(uvm_phase phase);
          forever begin
             expected_sequencer.get_next_item(expected_item);
             expected_ap       .write        (expected_item);
-            expected_sequencer.item_done    (expected_item);
+            expected_sequencer.item_done    ();
+            `uvml_hrtbt()
          end
       end
    join

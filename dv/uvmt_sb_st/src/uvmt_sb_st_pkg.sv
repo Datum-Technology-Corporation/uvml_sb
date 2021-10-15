@@ -44,6 +44,7 @@ package uvmt_sb_st_pkg;
    `include "uvmt_sb_st_constants.sv"
    
    // Components
+   `include "uvmt_sb_st_cov_model.sv"
    `include "uvmt_sb_st_sqr.sv"
    `include "uvmt_sb_st_vsqr.sv"
    
