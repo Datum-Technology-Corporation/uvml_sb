@@ -36,9 +36,18 @@ package uvml_sb_pkg;
    `include "uvml_sb_simplex_cfg.sv"
    `include "uvml_sb_simplex_cntxt.sv"
    `include "uvml_sb_simplex_entry.sv"
+   `include "uvml_sb_msimplex_cfg.sv"
+   `include "uvml_sb_msimplex_cntxt.sv"
+   `include "uvml_sb_duplex_cfg.sv"
+   `include "uvml_sb_duplex_cntxt.sv"
+   `include "uvml_sb_mduplex_cfg.sv"
+   `include "uvml_sb_mduplex_cntxt.sv"
    
    // Scoreboard components
    `include "uvml_sb_simplex.sv"
+   `include "uvml_sb_msimplex.sv"
+   `include "uvml_sb_duplex.sv"
+   `include "uvml_sb_mduplex.sv"
    
 endpackage : uvml_sb_pkg
 

@@ -17,7 +17,7 @@
 /**
  * Scoreboard comparing expected and actual packet stream to/from DUT.
  */
-class uvml_sb_simplex_c#(
+class uvml_sb_simplex_c #(
    type T_ACT_TRN  = uvm_object,
    type T_EXP_TRN  = T_ACT_TRN
 ) extends uvm_scoreboard;

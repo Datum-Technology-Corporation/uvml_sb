@@ -14,7 +14,13 @@
 `define __UVML_SB_MACROS_SV__
 
 
+`ifndef UVML_SB_MDUPLEX_MAX_CHANNELS
+   `define UVML_SB_MDUPLEX_MAX_CHANNELS 8
+`endif
 
+`ifndef UVML_SB_MSIMPLEX_MAX_STREAMS
+   `define UVML_SB_MSIMPLEX_MAX_STREAMS 8
+`endif
 
 
 `endif // __UVML_SB_MACROS_SV__
