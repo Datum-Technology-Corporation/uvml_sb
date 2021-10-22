@@ -1,5 +1,3 @@
-![alt text](https://raw.githubusercontent.com/Datum-Technology-Corporation/uvml_sb/gh-pages/scoreboard.png "SB Logo")
-
 # About
 The Moore.io UVM Scoreboarding Library is a vital component to any self-checking test bench.  This project consists of the library (`uvml_sb_pkg`) and its self-testing UVM Test Bench (`uvmt_sb_st_pkg`).
 
