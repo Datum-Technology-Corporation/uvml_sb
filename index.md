@@ -9,6 +9,12 @@
 The [Moore.io](https://www.mooreio.com) UVM Scoreboarding Library is a vital component to any self-checking test bench.  This project consists of the library (`uvml_sb_pkg`) and its self-testing UVM Test Bench (`uvmt_sb_st_pkg`).
 
 
+## Management
+
+| **[Issues](https://github.com/Datum-Technology-Corporation/uvml_sb/issues)** | **[Discussions](https://github.com/Datum-Technology-Corporation/uvml_sb/discussions)** |
+| **[Sub-Projects](https://github.com/Datum-Technology-Corporation/uvml_sb/projects)** | **[Wiki](https://github.com/Datum-Technology-Corporation/uvml_sb/wiki)** |
+
+
 ## Downloads
 
 | Latest Release (v1.0 Beta 0) | Stable (Nightly) | Stable (Weekly) |
@@ -17,12 +23,6 @@ The [Moore.io](https://www.mooreio.com) UVM Scoreboarding Library is a vital com
 | [Documentation](TODO) | [Documentation](TODO) | [Documentation](TODO) |
 
 > **[View All Releases](TODO)**
-
-
-## Management
-
-| **[Issues](https://github.com/Datum-Technology-Corporation/uvml_sb/issues)** | **[Discussions](https://github.com/Datum-Technology-Corporation/uvml_sb/discussions)** |
-| **[Projects](https://github.com/Datum-Technology-Corporation/uvml_sb/projects)** | **[Wiki](https://github.com/Datum-Technology-Corporation/uvml_sb/wiki)** |
 
 
 ## Metrics
