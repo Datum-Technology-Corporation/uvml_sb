@@ -24,7 +24,7 @@ The [Moore.io](https://www.mooreio.com) UVM Scoreboarding Library is a vital com
 | [Source Code](https://mooreio.com/packages/uvml_sb.tgz) | Source Code (Coming Soon) | Source Code (Coming Soon) |
 | Documentation (Coming Soon) | Documentation (Coming Soon) | Documentation (Coming Soon) |
 
-> **[View All Releases](Coming Soon)**
+> **[View All Releases](releases.md)**
 
 
 ## Metrics
