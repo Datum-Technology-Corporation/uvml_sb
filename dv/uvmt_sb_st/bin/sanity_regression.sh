@@ -14,8 +14,8 @@
 # Launched from uvml project sim dir
 ./setup_project.py
 source ./setup_terminal.sh
-../tools/.imports/mio/mio.py cpel uvmt_sb_st
-../tools/.imports/mio/mio.py sim uvmt_sb_st -t in_order -s 1 -c
-#../tools/.imports/mio/mio.py sim uvmt_sb_st -t out_of_order -s 1 -c
-../tools/.imports/mio/mio.py results uvmt_sb_st results
-#../tools/.imports/mio/mio.py cov uvmt_sb_st
+../tools/.imports/mio/src/mio.py cpel uvmt_sb_st
+../tools/.imports/mio/src/mio.py sim uvmt_sb_st -t in_order -s 1 -c
+#../tools/.imports/mio/src/mio.py sim uvmt_sb_st -t out_of_order -s 1 -c
+../tools/.imports/mio/src/mio.py results uvmt_sb_st results
+#../tools/.imports/mio/src/mio.py cov uvmt_sb_st
