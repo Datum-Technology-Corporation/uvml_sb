@@ -182,17 +182,19 @@ function void uvml_sb_simplex_c::build_phase(uvm_phase phase);
       `uvm_fatal("CFG", "Configuration handle is null")
    end
    
-   void'(uvm_config_db#(uvml_sb_simplex_cntxt_c)::get(this, "", "cntxt", cntxt));
-   if (cntxt == null) begin
-      `uvm_fatal("CNTXT", "Context handle is null")
+   if (cfg.enabled) begin
+      void'(uvm_config_db#(uvml_sb_simplex_cntxt_c)::get(this, "", "cntxt", cntxt));
+      if (cntxt == null) begin
+         `uvm_fatal("CNTXT", "Context handle is null")
+      end
+      
+      // Build TLM objects
+      act_export  = new("act_export", this);
+      exp_export  = new("exp_export", this);
+      act_fifo    = new("act_fifo"  , this);
+      exp_fifo    = new("exp_fifo"  , this);
+      ap          = new("ap"        , this);
    end
-   
-   // Build TLM objects
-   act_export  = new("act_export", this);
-   exp_export  = new("exp_export", this);
-   act_fifo    = new("act_fifo"  , this);
-   exp_fifo    = new("exp_fifo"  , this);
-   ap          = new("ap"        , this);
    
 endfunction : build_phase
 
