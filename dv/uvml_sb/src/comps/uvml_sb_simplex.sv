@@ -284,11 +284,12 @@ endfunction: check_phase
 
 task uvml_sb_simplex_c::mode_in_order();
    
-   T_ACT_TRN   act_trn;
-   T_EXP_TRN   exp_trn;
-   uvm_object  act_obj;
-   uvm_object  exp_obj;
-   entry_t     entry;
+   uvm_comparer  comparer;
+   T_ACT_TRN     act_trn;
+   T_EXP_TRN     exp_trn;
+   uvm_object    act_obj;
+   uvm_object    exp_obj;
+   entry_t       entry;
    
    act_obj = cntxt.act_q.pop_front();
    if (!$cast(act_trn, act_obj)) begin
@@ -315,7 +316,9 @@ task uvml_sb_simplex_c::mode_in_order();
       if (!$cast(exp_trn, exp_obj)) begin
          `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
       end
-      if (exp_trn.compare(act_trn)) begin
+      comparer = new();
+      comparer.check_type = 0;
+      if (exp_trn.compare(act_trn, comparer)) begin
          void'(cntxt.exp_q.pop_front());
          log_match(act_trn, exp_trn);
          cntxt.synced = 1;
@@ -355,6 +358,7 @@ endtask : mode_in_order
 
 task uvml_sb_simplex_c::mode_out_of_order();
    
+   uvm_comparer  comparer;
    T_ACT_TRN     act_trn;
    T_EXP_TRN     exp_trn;
    uvm_object    act_obj, exp_obj;
@@ -387,7 +391,9 @@ task uvml_sb_simplex_c::mode_out_of_order();
          if (!$cast(exp_trn, exp_obj)) begin
             `uvm_fatal("SB_SIMPLEX", $sformatf("Could not cast 'exp_obj' (%s) to 'exp_trn' (%s)", $typename(exp_obj), $typename(exp_trn)))
          end
-         if (exp_trn.compare(act_trn)) begin
+         comparer = new();
+         comparer.check_type = 0;
+         if (exp_trn.compare(act_trn, comparer)) begin
             exp_match_idx = ii;
             found_match = 1;
             cntxt.match_count++;
@@ -486,14 +492,14 @@ endfunction : calc_exp_stats
 
 function void uvml_sb_simplex_c::log_new_act(ref T_ACT_TRN trn);
    
-   `uvm_info("SB_SIMPLEX", $sformatf("New actual transaction from %s: \n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
+   `uvm_info("SB_SIMPLEX", $sformatf("New actual transaction from %s:\n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
    
 endfunction : log_new_act
 
 
 function void uvml_sb_simplex_c::log_new_exp(ref T_EXP_TRN trn);
    
-   `uvm_info("SB_SIMPLEX", $sformatf("New expected transaction from %s: \n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
+   `uvm_info("SB_SIMPLEX", $sformatf("New expected transaction from %s:\n%s", trn.get_initiator(), trn.sprint()), UVM_HIGH)
    
 endfunction : log_new_exp
 
@@ -515,7 +521,7 @@ endfunction : log_match
 function void uvml_sb_simplex_c::log_mismatch(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
    
    if (exp_trn != null) begin
-      `uvm_error("SB_SIMPLEX", $sformatf("Actual and Expected do not match: \nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
+      `uvm_error("SB_SIMPLEX", $sformatf("Actual and Expected do not match: \nActual:\n%s \nExpected:\n%s", act_trn.sprint(), exp_trn.sprint()))
    end
    else begin
       `uvm_error("SB_SIMPLEX", $sformatf("Did not find match for Actual:\n%s", act_trn.sprint()))
@@ -527,7 +533,7 @@ endfunction : log_mismatch
 function void uvml_sb_simplex_c::log_drop(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
    
    if (exp_trn != null) begin
-      `uvm_warning("SB_SIMPLEX", $sformatf("Actual and Expected do not match, but expected is marked as 'may drop':\nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
+      `uvm_warning("SB_SIMPLEX", $sformatf("Actual and Expected do not match, but expected is marked as 'may drop':\nActual:\n%s \nExpected:\n%s", act_trn.sprint(), exp_trn.sprint()))
    end
    else begin
       `uvm_warning("SB_SIMPLEX", $sformatf("Did not find match for Actual, but actual is marked as 'may drop':\n%s", act_trn.sprint()))
@@ -539,7 +545,7 @@ endfunction : log_drop
 function void uvml_sb_simplex_c::log_sync_loss(ref T_ACT_TRN act_trn, input T_EXP_TRN exp_trn=null);
    
    if (exp_trn != null) begin
-      `uvm_error("SB_SIMPLEX", $sformatf("Loss of sync.\nActual:\n%s \n Expected:\n%s", act_trn.sprint(), exp_trn.sprint()))
+      `uvm_error("SB_SIMPLEX", $sformatf("Loss of sync.\nActual:\n%s \nExpected:\n%s", act_trn.sprint(), exp_trn.sprint()))
    end
    else begin
       `uvm_error("SB_SIMPLEX", $sformatf("Loss of sync with no Expected.  Actual:\n%s", act_trn.sprint()))
