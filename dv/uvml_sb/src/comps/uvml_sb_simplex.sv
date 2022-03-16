@@ -494,7 +494,7 @@ function void uvml_sb_simplex_c::log_new_act(ref T_ACT_TRN trn);
       `uvm_info("SB_SIMPLEX", $sformatf("New actual transaction from %s:\n%s", trn.get_initiator().get_full_name(), trn.sprint()), UVM_DEBUG)
    end
    else begin
-      `uvm_info("SB_SIMPLEX", $sformatf("New actual transaction:\n%s", trn.sprint()), UVM_HIGH)
+      `uvm_info("SB_SIMPLEX", $sformatf("New actual transaction:\n%s", trn.sprint()), UVM_DEBUG)
    end
    
 endfunction : log_new_act
@@ -506,7 +506,7 @@ function void uvml_sb_simplex_c::log_new_exp(ref T_EXP_TRN trn);
       `uvm_info("SB_SIMPLEX", $sformatf("New expected transaction from %s:\n%s", trn.get_initiator().get_full_name(), trn.sprint()), UVM_DEBUG)
    end
    else begin
-      `uvm_info("SB_SIMPLEX", $sformatf("New expected transaction:\n%s", trn.sprint()), UVM_HIGH)
+      `uvm_info("SB_SIMPLEX", $sformatf("New expected transaction:\n%s", trn.sprint()), UVM_DEBUG)
    end
    
 endfunction : log_new_exp
