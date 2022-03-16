@@ -187,14 +187,14 @@ function void uvml_sb_simplex_c::build_phase(uvm_phase phase);
       if (cntxt == null) begin
          `uvm_fatal("CNTXT", "Context handle is null")
       end
-      
-      // Build TLM objects
-      act_export  = new("act_export", this);
-      exp_export  = new("exp_export", this);
-      act_fifo    = new("act_fifo"  , this);
-      exp_fifo    = new("exp_fifo"  , this);
-      ap          = new("ap"        , this);
    end
+   
+   // Build TLM objects
+   act_export  = new("act_export", this);
+   exp_export  = new("exp_export", this);
+   act_fifo    = new("act_fifo"  , this);
+   exp_fifo    = new("exp_fifo"  , this);
+   ap          = new("ap"        , this);
    
 endfunction : build_phase
 
@@ -203,11 +203,9 @@ function void uvml_sb_simplex_c::connect_phase(uvm_phase phase);
    
    super.connect_phase(phase);
    
-   if (cfg.enabled) begin
-      // Connect TLM objects
-      act_export.connect(act_fifo.analysis_export);
-      exp_export.connect(exp_fifo.analysis_export);
-   end
+   // Connect TLM objects
+   act_export.connect(act_fifo.analysis_export);
+   exp_export.connect(exp_fifo.analysis_export);
    
 endfunction: connect_phase
 
