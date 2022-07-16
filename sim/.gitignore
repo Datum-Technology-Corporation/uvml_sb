@@ -8,3 +8,5 @@
 /out/
 results/*
 /history.yaml
+results.xml
+results.html

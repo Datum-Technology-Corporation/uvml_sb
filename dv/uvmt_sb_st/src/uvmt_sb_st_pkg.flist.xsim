@@ -4,19 +4,19 @@
 
 
 // Libraries
-//-f ${DV_UVM_SRC_PATH}/uvm_pkg.flist.xsim
--f ${DV_UVML_SRC_PATH}/uvml_pkg.flist.xsim
--f ${DV_UVML_LOGS_SRC_PATH}/uvml_logs_pkg.flist.xsim
+//-f ${UVM_SRC_PATH}/uvm_pkg.flist.xsim
+-f ${UVML_SRC_PATH}/uvml_pkg.flist.xsim
+-f ${UVML_LOGS_SRC_PATH}/uvml_logs_pkg.flist.xsim
 
 // Target library
--f ${DV_UVML_SB_SRC_PATH}/uvml_sb_pkg.flist.xsim
+-f ${UVML_SB_SRC_PATH}/uvml_sb_pkg.flist.xsim
 
 // Scoreboarding Library test bench Directories
--i ${DV_UVMT_SB_ST_SRC_PATH}
--i ${DV_UVMT_SB_ST_SRC_PATH}/comps
--i ${DV_UVMT_SB_ST_SRC_PATH}/seq
--i ${DV_UVMT_SB_ST_SRC_PATH}/tb
--i ${DV_UVMT_SB_ST_SRC_PATH}/tests
+-i ${UVMT_SB_ST_SRC_PATH}
+-i ${UVMT_SB_ST_SRC_PATH}/comps
+-i ${UVMT_SB_ST_SRC_PATH}/seq
+-i ${UVMT_SB_ST_SRC_PATH}/tb
+-i ${UVMT_SB_ST_SRC_PATH}/tests
 
 // Scoreboarding Library tests (includes constants/macros/types meant for test bench)
-${DV_UVMT_SB_ST_SRC_PATH}/uvmt_sb_st_pkg.sv
+${UVMT_SB_ST_SRC_PATH}/uvmt_sb_st_pkg.sv

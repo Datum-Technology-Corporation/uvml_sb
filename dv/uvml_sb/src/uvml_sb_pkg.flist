@@ -4,9 +4,9 @@
 
 
 // Directories
-+incdir+${DV_UVML_SB_SRC_PATH}
-+incdir+${DV_UVML_SB_SRC_PATH}/comps
-+incdir+${DV_UVML_SB_SRC_PATH}/obj
++incdir+${UVML_SB_SRC_PATH}
++incdir+${UVML_SB_SRC_PATH}/comps
++incdir+${UVML_SB_SRC_PATH}/obj
 
 // Files
-${DV_UVML_SB_SRC_PATH}/uvml_sb_pkg.sv
+${UVML_SB_SRC_PATH}/uvml_sb_pkg.sv

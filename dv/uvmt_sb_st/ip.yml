@@ -15,32 +15,34 @@ ip:
   block-diagram: ""
   languages: ["sv"]
   simulators-supported:
-    - { name: "vivado", version: "2021.1" }
+    - { name: "vivado", version: "2022.1" }
   tags: []
   copyright-holders: ["Datum Technology Corporation"]
   licenses: ["SHL-2.1"]
 
 structure:
-   scripts-paths : [ "bin"      ]
-   docs-paths    : [ "docs"     ]
-   examples-paths: [ "examples" ]
-   src-paths     : [ "src"      ]
+   scripts-path : "bin"
+   docs-path    : "docs"
+   examples-path: "examples"
+   src-path     : "src"
 
 dependencies:
-  - { type: "DV", name: "uvm"      , repo-uri: "https://github.com/Datum-Technology-Corporation/uvm.git"      , repo-branch: "main", repo-path: "dv/uvm"       }
-  - { type: "DV", name: "uvml"     , repo-uri: "https://github.com/Datum-Technology-Corporation/uvml.git"     , repo-branch: "main", repo-path: "dv/uvml"      }
-  - { type: "DV", name: "uvml_logs", repo-uri: "https://github.com/Datum-Technology-Corporation/uvml_logs.git", repo-branch: "main", repo-path: "dv/uvml_logs" }
+  - { name: "uvm", version: "1.2" }
+  - { name: "uvml", version: "~1.0" }
+  - { name: "uvml_logs", version: "~1.0" }
+#  - { name: "uvml_sb", version: "^" }
+#  - { name: "uvme_sb_st", version: "^" }
 
 hdl-src:
-  top-constructs: ["uvmt_sb_st_tb", "uvml_logs_sim_summary"]
+  top-constructs: ["uvmt_sb_st_tb", "uvml_sim_summary"]
   directories: [".", "tb", "tests"]
   test-paths: ["tests"]
   test-name-template: "uvmt_sb_st_{{ name }}_test_c"
-  flists:
-    metrics : [ "src/uvmt_sb_st_pkg.flist"      ]
-    riviera : [ "src/uvmt_sb_st_pkg.flist"      ]
-    questa  : [ "src/uvmt_sb_st_pkg.flist"      ]
-    vcs     : [ "src/uvmt_sb_st_pkg.flist"      ]
-    vivado  : [ "src/uvmt_sb_st_pkg.flist.xsim" ]
-    xcelium : [ "src/uvmt_sb_st_pkg.flist"      ]
+  flist:
+    metrics : "uvmt_sb_st_pkg.flist"
+    riviera : "uvmt_sb_st_pkg.flist"
+    questa  : "uvmt_sb_st_pkg.flist"
+    vcs     : "uvmt_sb_st_pkg.flist"
+    vivado  : "uvmt_sb_st_pkg.flist.xsim"
+    xcelium : "uvmt_sb_st_pkg.flist"
 

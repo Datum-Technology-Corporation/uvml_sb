@@ -7,6 +7,8 @@
 `define __UVMT_SB_ST_TDEFS_SV__
 
 
+typedef class uvmt_sb_st_seq_item_c;
+
 /**
  * Scoreboarding entry type for this test-bench
  */
